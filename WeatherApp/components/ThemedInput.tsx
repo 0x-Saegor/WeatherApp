@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, type TextInputProps } from "react-native";
+import { Platform, StyleSheet, type TextInputProps } from "react-native";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { TextInput } from "react-native-gesture-handler";
@@ -14,6 +14,8 @@ export function ThemedInput({
   lightColor,
   darkColor,
   placeholder,
+  onChangeText,
+  value,
   type = "default",
 }: ThemedTextInputProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
@@ -25,7 +27,9 @@ export function ThemedInput({
         type === "default" ? styles.default : undefined,
         style,
       ]}
+      onChangeText={onChangeText}
       placeholder={placeholder}
+      value={value}
     />
   );
 }
