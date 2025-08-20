@@ -1,12 +1,12 @@
+import { useThemeColor } from "@/hooks/useThemeColor";
 import {
+  GestureResponderEvent,
+  Pressable,
   StyleSheet,
   Text,
-  Pressable,
-  ViewStyle,
   TextStyle,
-  GestureResponderEvent,
+  ViewStyle,
 } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
 
 export type ThemedButtonProps = {
   title: string;
@@ -40,9 +40,13 @@ export function ThemedButton({
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
-        { backgroundColor: pressed ? "#ccc" : backgroundColor },
+        {
+          backgroundColor: pressed
+            ? style?.backgroundColor || "#ccc"
+            : style?.backgroundColor || backgroundColor,
+        },
         styles.buttonBase,
-        style,
+        style, // this should be last so it can override previous ones
       ]}
     >
       <Text

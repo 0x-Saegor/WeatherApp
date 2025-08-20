@@ -1,7 +1,8 @@
 import { Image } from "expo-image";
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { checkConnectivity, getWeather } from "@/api/fetchApi";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedInput } from "@/components/ThemedInput";
@@ -13,6 +14,14 @@ export default function HomeScreen() {
   const [city, setCity] = useState("Paris");
   const [isLoaded, setIsLoaded] = useState(false);
   const [response, setResponse] = useState();
+  const [isOnline, setIsOnline] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const updateOnlineStatus = async () => {
+    const isOnline = await checkConnectivity();
+    setIsOnline(isOnline);
+  };
 
   const tester = {
     current: {
@@ -65,13 +74,16 @@ export default function HomeScreen() {
       tz_id: "Europe/Paris",
     },
   };
-  return (
+
+  !isOnline && updateOnlineStatus();
+
+  return isOnline ? (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
         <Image
           source="https://static.independent.co.uk/2025/04/25/13/42/iStock-1498516775.jpg"
-          style={styles.reactLogo}
+          style={styles.backgroundImage}
         />
       }
     >
@@ -89,24 +101,102 @@ export default function HomeScreen() {
           <ThemedButton
             title="Show weather"
             onPress={async () => {
-              // setResponse(await getWeather(city));
-              setResponse(tester);
               setIsLoaded(true);
+              setIsLoading(true);
+
+              const local_response = await getWeather(city);
+              console.log(local_response);
+
+              setIsLoading(false);
+              if (local_response.networkError) {
+                setIsOnline(false);
+              } else if (local_response.error) {
+                setError(true);
+                setResponse(local_response);
+              } else {
+                setResponse(local_response);
+                setError(false);
+                // setResponse(tester);
+              }
             }}
           />
         </ThemedView>
-        <ThemedView style={styles.weatherCard}>
-          <Image
-            source={
-              response?.["current"]?.["condition"]?.["icon"]
-                ? `https:${response?.["current"]?.["condition"]?.["icon"]}`
-                : undefined
-            }
-            style={styles.weatherIcon}
-          />
-          <ThemedText type="default" style={styles.weatherText}>
-            {response?.["current"]?.["condition"]?.["text"]}
+        {isLoaded && (
+          <ThemedView
+            style={[
+              styles.weatherCard,
+              error && {
+                backgroundColor: "#fdecea",
+              },
+            ]}
+          >
+            {isLoading ? (
+              <ThemedView
+                style={{
+                  alignItems: "center",
+                  backgroundColor: "transparent",
+                  width: "100%",
+                }}
+              >
+                <ActivityIndicator size="large" />
+              </ThemedView>
+            ) : (
+              <>
+                {!error && (
+                  <Image
+                    source={
+                      response?.["current"]?.["condition"]?.["icon"]
+                        ? `https:${response?.["current"]?.["condition"]?.["icon"]}`
+                        : undefined
+                    }
+                    style={styles.weatherIcon}
+                  />
+                )}
+                <ThemedText
+                  type="default"
+                  style={[styles.weatherText, error && { color: "red" }]}
+                >
+                  {!error
+                    ? response?.["current"]?.["condition"]?.["text"]
+                    : response?.["error"]?.["message"] +
+                      " (" +
+                      response?.["error"]?.["code"] +
+                      ")"}
+                </ThemedText>
+              </>
+            )}
+          </ThemedView>
+        )}
+      </GestureHandlerRootView>
+    </ParallaxScrollView>
+  ) : (
+    <ParallaxScrollView
+      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+      headerImage={
+        <Image
+          source="https://static.independent.co.uk/2025/04/25/13/42/iStock-1498516775.jpg"
+          style={styles.backgroundImage}
+        />
+      }
+    >
+      <GestureHandlerRootView>
+        <ThemedView style={styles.titleContainer}>
+          <ThemedText type="title">Weather App</ThemedText>
+        </ThemedView>
+        <ThemedView style={styles.stepContainer}></ThemedView>
+        <ThemedView style={styles.errorCard}>
+          <ThemedText type="subtitle">
+            Connection failed, please try again
           </ThemedText>
+          <ThemedButton
+            title="Try again"
+            onPress={updateOnlineStatus}
+            style={[{ backgroundColor: "#d9534f" }]}
+            textStyle={{
+              color: "#fff", // white text for contrast
+              fontWeight: "600",
+            }}
+          />
         </ThemedView>
       </GestureHandlerRootView>
     </ParallaxScrollView>
@@ -123,7 +213,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginVertical: 10,
   },
-  reactLogo: {
+  backgroundImage: {
     height: "100%",
     width: "100%",
     bottom: 0,
@@ -143,6 +233,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3, // for Android shadow
+  },
+
+  errorCard: {
+    flexDirection: "column",
+    alignItems: "center",
+    backgroundColor: "#fdecea", // light red background
+    padding: 16,
+    borderRadius: 10,
+    marginVertical: 20,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: "#f5c6cb", // subtle red border
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
 
   weatherIcon: {
