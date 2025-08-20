@@ -2,7 +2,7 @@ import { Image } from "expo-image";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { checkConnectivity, getWeather } from "@/api/fetchApi";
+import { checkConnectivity } from "@/api/fetchApi";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedInput } from "@/components/ThemedInput";
@@ -104,17 +104,18 @@ export default function HomeScreen() {
               setIsLoaded(true);
               setIsLoading(true);
 
-              const local_response = await getWeather(city);
+              // const local_response = await getWeather(city);
+              const local_response = tester;
               console.log(local_response);
 
               setIsLoading(false);
               if (local_response.networkError) {
                 setIsOnline(false);
-              } else if (local_response.error) {
+              } else if (local_response.error !== undefined) {
                 setError(true);
-                setResponse(local_response);
+                setResponse(tester);
               } else {
-                setResponse(local_response);
+                setResponse(tester);
                 setError(false);
                 // setResponse(tester);
               }
@@ -122,50 +123,71 @@ export default function HomeScreen() {
           />
         </ThemedView>
         {isLoaded && (
-          <ThemedView
-            style={[
-              styles.weatherCard,
-              error && {
-                backgroundColor: "#fdecea",
-              },
-            ]}
-          >
-            {isLoading ? (
-              <ThemedView
-                style={{
-                  alignItems: "center",
-                  backgroundColor: "transparent",
-                  width: "100%",
-                }}
-              >
-                <ActivityIndicator size="large" />
-              </ThemedView>
-            ) : (
-              <>
-                {!error && (
-                  <Image
-                    source={
-                      response?.["current"]?.["condition"]?.["icon"]
-                        ? `https:${response?.["current"]?.["condition"]?.["icon"]}`
-                        : undefined
-                    }
-                    style={styles.weatherIcon}
-                  />
-                )}
-                <ThemedText
-                  type="default"
-                  style={[styles.weatherText, error && { color: "red" }]}
+          <>
+            <ThemedView
+              style={[
+                styles.weatherCard,
+                error && {
+                  backgroundColor: "#fdecea",
+                },
+              ]}
+            >
+              {isLoading ? (
+                <ThemedView
+                  style={{
+                    alignItems: "center",
+                    backgroundColor: "transparent",
+                    width: "100%",
+                  }}
                 >
-                  {!error
-                    ? response?.["current"]?.["condition"]?.["text"]
-                    : response?.["error"]?.["message"] +
-                      " (" +
-                      response?.["error"]?.["code"] +
-                      ")"}
-                </ThemedText>
-              </>
-            )}
-          </ThemedView>
+                  <ActivityIndicator size="large" />
+                </ThemedView>
+              ) : (
+                <>
+                  {!error && (
+                    <Image
+                      source={
+                        response?.["current"]?.["condition"]?.["icon"]
+                          ? `https:${response?.["current"]?.["condition"]?.["icon"]}`
+                          : undefined
+                      }
+                      style={styles.weatherIcon}
+                    />
+                  )}
+                  <ThemedText
+                    type="default"
+                    style={[styles.weatherText, error && { color: "red" }]}
+                  >
+                    {!error
+                      ? response?.["current"]?.["condition"]?.["text"]
+                      : response?.["error"]?.["message"] +
+                        " (" +
+                        response?.["error"]?.["code"] +
+                        ")"}
+                  </ThemedText>
+                </>
+              )}
+            </ThemedView>
+            <ThemedView
+              style={[
+                styles.weatherCard,
+                {
+                  flexDirection: "column",
+                  backgroundColor: "#d0f1bbff",
+                  alignItems: "flex-start",
+                  gap: 10,
+                },
+              ]}
+            >
+              <ThemedText type="defaultSemiBold">Temperature</ThemedText>
+              <ThemedText>
+                Real temperature : {response?.["current"]?.["temp_c"]}°C
+              </ThemedText>
+              <ThemedText>
+                Feels like : {response?.["current"]?.["feelslike_c"]}°C
+              </ThemedText>
+            </ThemedView>
+          </>
         )}
       </GestureHandlerRootView>
     </ParallaxScrollView>
