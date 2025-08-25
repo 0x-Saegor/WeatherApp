@@ -1,5 +1,5 @@
 // const API_URL = 'http://localhost:3000'
-const API_URL = "http://135.118.230.73:3000";
+const API_URL = "http://135.118.230.82:3000";
 
 export async function getWeather(city: string) {
   let new_city = city.split(" ");

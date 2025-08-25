@@ -13,6 +13,10 @@ import (
 
 var API_KEY string
 
+func checkConnectivity(c *gin.Context) {
+	c.JSON(200, "Backend online")
+}
+
 func getWeather(c *gin.Context) {
 	city := c.Param("city")
 	fmt.Println("getWeather -> " + city)
@@ -51,6 +55,7 @@ func main() {
 
 	router := gin.Default()
 
+	router.GET("/online", checkConnectivity)
 	router.GET("/weather/:city", getWeather)
 
 	router.Run("0.0.0.0:3000")
