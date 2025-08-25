@@ -14,10 +14,11 @@ The app allows users to search for weather information in different cities aroun
 
 ## 📱 Screenshots
 
-_Add your screenshots here_
+![thumbnail_IMG_2185](https://github.com/user-attachments/assets/6c610dba-c558-4a73-aec6-f134937319da)
+![thumbnail_IMG_2186](https://github.com/user-attachments/assets/9aa9736a-5d41-4972-b866-2a5c07cf8528)
+![IMG_2187](https://github.com/user-attachments/assets/f17c8e17-3042-4069-bc95-69ae499a35fa)
 
-![Home Screen](path/to/screenshot1.png)
-![Weather Details](path/to/screenshot2.png)
+
 
 ## 🚀 Getting Started
 
