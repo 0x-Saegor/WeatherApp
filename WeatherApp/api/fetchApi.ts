@@ -1,5 +1,5 @@
-// const API_URL = 'http://localhost:3000'
-const API_URL = "http://135.118.230.82:3000";
+const API_URL = "http://localhost:3000";
+// const API_URL = "http://135.118.230.82:3000"; // to work with expo go
 
 export async function getWeather(city: string) {
   let new_city = city.split(" ");
@@ -13,14 +13,14 @@ export async function getWeather(city: string) {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 1000); // 1000 ms = 1s
+  const timeout = setTimeout(() => controller.abort(), 1000);
 
   try {
     const response = await fetch(`${API_URL}/weather/${city_correct}`, {
       signal: controller.signal,
     });
 
-    clearTimeout(timeout); // Clear the timeout if request completes
+    clearTimeout(timeout);
 
     const data = await response.json();
 
@@ -57,7 +57,7 @@ export async function getWeather(city: string) {
 
 export async function checkConnectivity(): Promise<boolean> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 1000); // 1 second timeout
+  const timeout = setTimeout(() => controller.abort(), 1000);
 
   try {
     const response = await fetch(API_URL + "/online", {
