@@ -14,9 +14,9 @@ The app allows users to search for weather information in different cities aroun
 
 ## 📱 Screenshots
 
-<img src="https://github.com/user-attachments/assets/c763a858-8709-4f64-a350-219cdaa98950" width="300" />
-<img src="https://github.com/user-attachments/assets/f7ae8727-78fb-4a11-b4a3-0dc468c999f3" width="300" />
 <img src="https://github.com/user-attachments/assets/7e925bea-0280-447e-aa72-69768678f843" width="300" />
+<img src="https://github.com/user-attachments/assets/f7ae8727-78fb-4a11-b4a3-0dc468c999f3" width="300" />
+<img src="https://github.com/user-attachments/assets/c763a858-8709-4f64-a350-219cdaa98950" width="300" />
 
 
 
